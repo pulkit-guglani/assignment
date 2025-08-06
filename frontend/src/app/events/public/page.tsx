@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import PublicEventCard from "../../../components/PublicEventCard";
 import { useGetPublicEvents, useGetUserData } from "../query";
-import { useRsvpToEventMutation } from "../mutation";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function PublicEventsPage() {
@@ -118,7 +117,6 @@ export default function PublicEventsPage() {
           )}
         </div>
 
-        {/* Navigation back to My Events if logged in */}
         {isLoggedIn && (
           <div className="text-center mt-8">
             <button

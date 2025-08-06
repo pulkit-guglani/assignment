@@ -6,7 +6,6 @@ export async function loginOrSignupUser(username: string) {
 }
 export async function getUserData() {
   const username = localStorage.getItem("username");
-  console.log("username", username);
   if (!username) {
     throw new Error("Username not found");
   }

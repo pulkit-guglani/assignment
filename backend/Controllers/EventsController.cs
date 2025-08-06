@@ -17,7 +17,6 @@ namespace EventApp.Controllers
             _eventService = eventService;
         }
 
-        // GET: api/events/{username}
         [HttpGet("{username}")]
         public async Task<ActionResult<IEnumerable<Event>>> GetEventsByUser(string username)
         {
@@ -32,7 +31,6 @@ namespace EventApp.Controllers
             return Ok(events);
         }
 
-        // POST: api/events
         [HttpPost]
         public async Task<ActionResult<Event>> CreateEvent(Event eventRequest)
         {

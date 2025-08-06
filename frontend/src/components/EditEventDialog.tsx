@@ -7,7 +7,7 @@ interface EditEventDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (event: Event) => void;
-  event?: Event | null; // null or undefined for creating new event
+  event?: Event | null;
   isLoading: boolean;
 }
 
@@ -36,10 +36,8 @@ export default function EditEventDialog({
     }
   }, []);
 
-  // Populate form when editing existing event
   useEffect(() => {
     if (event) {
-      // Convert ISO date format to YYYY-MM-DD for HTML date input
       const formatDateForInput = (dateString: string) => {
         if (!dateString) return "";
         const date = new Date(dateString);
@@ -49,10 +47,9 @@ export default function EditEventDialog({
         return `${year}-${month}-${day}`;
       };
 
-      // Convert HH:mm:ss to HH:mm for HTML time input
       const formatTimeForInput = (timeString: string) => {
         if (!timeString) return "";
-        return timeString.substring(0, 5); // Take only HH:mm part
+        return timeString.substring(0, 5);
       };
 
       setFormData({
@@ -64,7 +61,6 @@ export default function EditEventDialog({
         maxRsvpCount: event.maxRsvpCount?.toString() || "",
       });
     } else {
-      // Reset form for new event
       setFormData({
         eventName: "",
         date: "",
@@ -89,7 +85,6 @@ export default function EditEventDialog({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Basic validation
     if (!formData.eventName.trim()) {
       alert("Event name is required");
       return;
@@ -111,14 +106,11 @@ export default function EditEventDialog({
       return;
     }
 
-    // Convert form data to API format
     const formatDateForAPI = (dateString: string) => {
-      // Convert YYYY-MM-DD to ISO format YYYY-MM-DDTHH:mm:ss
       return `${dateString}T00:00:00`;
     };
 
     const formatTimeForAPI = (timeString: string) => {
-      // Convert HH:mm to HH:mm:ss
       return `${timeString}:00`;
     };
 
@@ -156,7 +148,6 @@ export default function EditEventDialog({
   return (
     <div className="fixed inset-0 text-gray-800 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-lg w-full max-w-md mx-4">
-        {/* Header */}
         <div className="border-b border-gray-200 px-6 py-4">
           <h2 className="text-xl font-semibold text-gray-900">
             {event ? "Edit Event" : "Event Creation / Edit Form"}
@@ -166,9 +157,7 @@ export default function EditEventDialog({
           </p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {/* Event Name */}
           <div>
             <label
               htmlFor="eventName"
@@ -188,7 +177,6 @@ export default function EditEventDialog({
             />
           </div>
 
-          {/* Date and Time Row */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label
@@ -226,7 +214,6 @@ export default function EditEventDialog({
             </div>
           </div>
 
-          {/* Location */}
           <div>
             <label
               htmlFor="location"
@@ -246,7 +233,6 @@ export default function EditEventDialog({
             />
           </div>
 
-          {/* Description */}
           <div>
             <label
               htmlFor="description"
@@ -265,7 +251,6 @@ export default function EditEventDialog({
             />
           </div>
 
-          {/* Max RSVPs */}
           <div>
             <label
               htmlFor="maxRsvpCount"
@@ -291,7 +276,6 @@ export default function EditEventDialog({
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex gap-3 pt-4">
             <button
               type="submit"

@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import { useLoginSignupMutation } from "../app/login/mutation";
 import { useRouter } from "next/navigation";
 
-// Basic login component with minimal styling
-// Calls POST /login with a JSON body: { username }
 export default function LoginBox() {
   const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);

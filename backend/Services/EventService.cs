@@ -29,7 +29,6 @@ namespace EventApp.Services
 
         public async Task<IEnumerable<Event>> GetRsvpedEventsByUserAsync(string username)
         {
-            // Retrieve all events and filter in-memory for RSVPs containing the specified username
             var allEvents = await _context.Events.ToListAsync();
             return allEvents.Where(e => e.RsvpedUsers.Contains(username));
         }
@@ -39,7 +38,6 @@ namespace EventApp.Services
             if (newEvent == null)
                 throw new ArgumentNullException(nameof(newEvent));
 
-            // Ensure user exists or create a new one
             var user = await _context.Users.FirstOrDefaultAsync(u =>
                 u.Username == newEvent.Username
             );
@@ -49,11 +47,10 @@ namespace EventApp.Services
                 _context.Users.Add(user);
             }
 
-            newEvent.RsvpedUsers = new List<string>();
+            newEvent.RsvpedUsers = [];
 
             _context.Events.Add(newEvent);
 
-            // Save changes for both user and event in one transaction
             await _context.SaveChangesAsync();
 
             return newEvent;
