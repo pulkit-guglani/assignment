@@ -1,0 +1,35 @@
+# === General ===
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp
+
+# === Node / React Frontend ===
+**/node_modules/
+**/.env
+**/.env.*.local
+**/build/
+**/dist/
+**/.next/
+**/.turbo/
+**/.parcel-cache/
+
+# === .NET Backend ===
+**/bin/
+**/obj/
+**/*.user
+**/*.suo
+**/*.cache
+**/*.csproj.user
+**/*.dbmdl
+**/.vs/
+**/*.pdb
+**/*.exe
+**/*.dll
+
+# === Global Environment ===
+.env
+.env.local
+.vscode/
+.idea/``
