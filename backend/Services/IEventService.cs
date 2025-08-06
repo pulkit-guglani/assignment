@@ -12,5 +12,6 @@ namespace EventApp.Services
         Task<Event> UpdateEventAsync(Event updatedEvent, int eventId);
         Task<bool> DeleteEventAsync(int eventId);
         Task<IEnumerable<Event>> GetAllEventsAsync();
+        Task<bool> RsvpToEventAsync(int eventId, string username);
     }
 }

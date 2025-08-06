@@ -68,5 +68,12 @@ namespace EventApp.Controllers
             var result = await _eventService.DeleteEventAsync(eventId);
             return result ? Ok() : NotFound();
         }
+
+        [HttpPost("{eventId}/rsvp")]
+        public async Task<ActionResult<bool>> RsvpToEvent(int eventId, string username)
+        {
+            var result = await _eventService.RsvpToEventAsync(eventId, username);
+            return result ? Ok() : BadRequest("Event is full or you have already RSVPed");
+        }
     }
 }

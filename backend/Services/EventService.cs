@@ -90,5 +90,28 @@ namespace EventApp.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> RsvpToEventAsync(int eventId, string username)
+        {
+            var existingEvent = await _context.Events.FirstOrDefaultAsync(e => e.Id == eventId);
+            if (existingEvent == null)
+            {
+                return false;
+            }
+
+            if (existingEvent.RsvpedUsers.Count >= existingEvent.MaxRsvpCount)
+            {
+                return false;
+            }
+
+            if (existingEvent.RsvpedUsers.Contains(username))
+            {
+                return false;
+            }
+
+            existingEvent.RsvpedUsers.Add(username);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }
