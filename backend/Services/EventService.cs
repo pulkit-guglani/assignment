@@ -67,9 +67,12 @@ namespace EventApp.Services
                 await _context.Events.FirstOrDefaultAsync(e => e.Id == eventId)
                 ?? throw new ArgumentException("Event not found");
 
-            var originalUsername = existingEvent.Username;
-            existingEvent = updatedEvent;
-            existingEvent.Username = originalUsername;
+            existingEvent.EventName = updatedEvent.EventName;
+            existingEvent.Date = updatedEvent.Date;
+            existingEvent.Time = updatedEvent.Time;
+            existingEvent.Location = updatedEvent.Location;
+            existingEvent.Description = updatedEvent.Description;
+            existingEvent.MaxRsvpCount = updatedEvent.MaxRsvpCount;
 
             await _context.SaveChangesAsync();
             return existingEvent;
