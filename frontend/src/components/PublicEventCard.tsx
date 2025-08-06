@@ -2,25 +2,52 @@
 
 import { User } from "@/types/user";
 import { Event } from "../types/event";
+import { useRsvpToEventMutation } from "@/app/events/mutation";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 interface PublicEventCardProps {
   event: Event;
-  onRSVP: (eventId: number) => void;
   isRSVPLoading?: boolean;
   userData: User | null;
 }
 
 export default function PublicEventCard({
   event,
-  onRSVP,
-  isRSVPLoading,
   userData,
 }: PublicEventCardProps) {
+  const {
+    mutate: rsvpToEvent,
+    isPending: isRSVPLoading,
+    isSuccess,
+    error,
+  } = useRsvpToEventMutation();
+
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (isSuccess) {
+      queryClient.invalidateQueries({ queryKey: ["publicEvents"] });
+      alert("Successfully RSVPed to the event!");
+    }
+  }, [isSuccess]);
+
+  useEffect(() => {
+    if (error) {
+      alert(
+        "Failed to RSVP. You may have already RSVPed or the event is full."
+      );
+    }
+  }, [error]);
+
   const alreadyRSVPed = userData?.rsvpedEvents.some((e) => e.id === event.id);
 
   const handleRSVP = () => {
-    if (event?.id) {
-      onRSVP(event.id);
+    if (event?.id && userData?.username) {
+      rsvpToEvent({ eventId: event.id, username: userData.username });
+    }
+    if (!userData?.username) {
+      alert("Please log in to RSVP to events!");
     }
   };
 

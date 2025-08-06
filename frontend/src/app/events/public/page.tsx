@@ -13,14 +13,10 @@ export default function PublicEventsPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const { data: userData, isLoading: isLoadingUserData } = useGetUserData(
-    currentUser || ""
-  );
+  const { data: userData } = useGetUserData(currentUser || "");
 
   const { data: publicEvents, isLoading: isLoadingPublicEvents } =
     useGetPublicEvents();
-  const { mutate: rsvpToEvent, isPending: isRSVPLoading } =
-    useRsvpToEventMutation();
 
   useEffect(() => {
     const username = localStorage.getItem("username");
@@ -31,30 +27,6 @@ export default function PublicEventsPage() {
       setIsLoggedIn(false);
     }
   }, []);
-
-  const handleRSVP = (eventId: number) => {
-    if (!isLoggedIn || !currentUser) {
-      alert("Please log in to RSVP to events!");
-      return;
-    }
-
-    rsvpToEvent(
-      { eventId, username: currentUser },
-      {
-        onSuccess: () => {
-          // Invalidate queries to refresh the data
-          queryClient.invalidateQueries({ queryKey: ["publicEvents"] });
-          alert("Successfully RSVPed to the event!");
-        },
-        onError: (error: any) => {
-          console.error("RSVP error:", error);
-          alert(
-            "Failed to RSVP. You may have already RSVPed or the event is full."
-          );
-        },
-      }
-    );
-  };
 
   const handleLoginRedirect = () => {
     router.push("/");
@@ -139,8 +111,6 @@ export default function PublicEventsPage() {
                 <PublicEventCard
                   key={event.id}
                   event={event}
-                  onRSVP={handleRSVP}
-                  isRSVPLoading={isRSVPLoading}
                   userData={userData || null}
                 />
               ))}
