@@ -99,7 +99,7 @@ namespace EventApp.Services
                 return false;
             }
 
-            if (existingEvent.RsvpedUsers.Count >= existingEvent.MaxRsvpCount)
+            if (existingEvent.RsvpCount >= existingEvent.MaxRsvpCount)
             {
                 return false;
             }
@@ -110,6 +110,7 @@ namespace EventApp.Services
             }
 
             existingEvent.RsvpedUsers.Add(username);
+            existingEvent.RsvpCount++;
             await _context.SaveChangesAsync();
             return true;
         }

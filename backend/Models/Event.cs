@@ -27,7 +27,8 @@ namespace EventApp.Models
 
         public int MaxRsvpCount { get; set; }
 
-        // Stored as comma-separated string in SQLite via EF Core value converter
-        public List<string> RsvpedUsers { get; set; } = new();
+        public int RsvpCount { get; set; }
+
+        public List<string> RsvpedUsers { get; set; } = [];
     }
 }
