@@ -23,6 +23,9 @@ Thumbs.db
 **/*.cache
 **/*.csproj.user
 **/*.dbmdl
+**/*.db
+**/*.db-shm
+**/*.db-wal
 **/.vs/
 **/*.pdb
 **/*.exe

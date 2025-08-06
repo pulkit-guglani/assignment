@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,9 +31,24 @@ namespace EventApp.Services
 
         public async Task<Event> CreateEventAsync(Event newEvent)
         {
+            if (newEvent == null)
+                throw new ArgumentNullException(nameof(newEvent));
+
+            // Ensure user exists or create a new one
+            var user = await _context.Users.FirstOrDefaultAsync(u =>
+                u.Username == newEvent.Username
+            );
+            if (user == null)
+            {
+                user = new User { Username = newEvent.Username };
+                _context.Users.Add(user);
+            }
+
             newEvent.RsvpedUsers = new List<string>();
 
             _context.Events.Add(newEvent);
+
+            // Save changes for both user and event in one transaction
             await _context.SaveChangesAsync();
 
             return newEvent;
