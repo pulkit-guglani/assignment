@@ -43,7 +43,10 @@ export default function EditEventDialog({
       const formatDateForInput = (dateString: string) => {
         if (!dateString) return "";
         const date = new Date(dateString);
-        return date.toISOString().split("T")[0];
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
       };
 
       // Convert HH:mm:ss to HH:mm for HTML time input

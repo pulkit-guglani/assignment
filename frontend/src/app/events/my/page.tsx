@@ -5,13 +5,16 @@ import EventCard from "../../../components/EventCard";
 import EditEventDialog from "../../../components/EditEventDialog";
 import { Event } from "../../../types/event";
 import { useGetUserEvents } from "../query";
-import { useCreateEventMutation } from "../mutation";
+import { useCreateEventMutation, useEditEventMutation } from "../mutation";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function MyEventsPage() {
   const [currentUser, setCurrentUser] = useState<string>("Username");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  const [eventEditMode, setEventEditMode] = useState<"create" | "edit">(
+    "create"
+  );
   const queryClient = useQueryClient();
   const { data: userEvents, isLoading: isLoadingUserEvents } =
     useGetUserEvents(currentUser);
@@ -20,6 +23,11 @@ export default function MyEventsPage() {
     isPending: isCreatingEvent,
     isSuccess: isEventCreated,
   } = useCreateEventMutation();
+  const {
+    mutate: editEvent,
+    isPending: isEditingEvent,
+    isSuccess: isEventEdited,
+  } = useEditEventMutation();
 
   useEffect(() => {
     const username = localStorage.getItem("username");
@@ -28,20 +36,32 @@ export default function MyEventsPage() {
     }
   }, []);
 
+  const resetEventForm = () => {
+    setIsDialogOpen(false);
+    setEditingEvent(null);
+    queryClient.invalidateQueries({ queryKey: ["userEvents"] });
+  };
+
   useEffect(() => {
     if (isEventCreated) {
-      setIsDialogOpen(false);
-      setEditingEvent(null);
-      queryClient.invalidateQueries({ queryKey: ["userEvents"] });
+      resetEventForm();
     }
   }, [isEventCreated]);
 
+  useEffect(() => {
+    if (isEventEdited) {
+      resetEventForm();
+    }
+  }, [isEventEdited]);
+
   const handleCreateNewEvent = () => {
+    setEventEditMode("create");
     setEditingEvent(null);
     setIsDialogOpen(true);
   };
 
   const handleEditEvent = (event: Event) => {
+    setEventEditMode("edit");
     setEditingEvent(event);
     setIsDialogOpen(true);
   };
@@ -55,7 +75,11 @@ export default function MyEventsPage() {
   };
 
   const handleSaveEvent = (eventData: Event) => {
-    createEvent(eventData);
+    if (eventEditMode === "edit") {
+      editEvent(eventData);
+    } else {
+      createEvent(eventData);
+    }
   };
 
   const handleCloseDialog = () => {
@@ -133,7 +157,7 @@ export default function MyEventsPage() {
         onClose={handleCloseDialog}
         onSave={handleSaveEvent}
         event={editingEvent}
-        isLoading={isCreatingEvent}
+        isLoading={isCreatingEvent || isEditingEvent}
       />
     </div>
   );
