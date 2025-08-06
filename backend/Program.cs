@@ -11,9 +11,11 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IEventService, EventService>();
 
+builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(
-        builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=events.db"
+        builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=database.db"
     )
 );
 

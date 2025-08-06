@@ -61,14 +61,11 @@ namespace EventApp.Services
 
         public async Task<Event> UpdateEventAsync(Event updatedEvent, int eventId)
         {
-            if (updatedEvent == null)
-                throw new ArgumentNullException(nameof(updatedEvent));
+            ArgumentNullException.ThrowIfNull(updatedEvent);
 
-            var existingEvent = await _context.Events.FirstOrDefaultAsync(e => e.Id == eventId);
-            if (existingEvent == null)
-            {
-                return null;
-            }
+            var existingEvent =
+                await _context.Events.FirstOrDefaultAsync(e => e.Id == eventId)
+                ?? throw new ArgumentException("Event not found");
 
             var originalUsername = existingEvent.Username;
             existingEvent = updatedEvent;
