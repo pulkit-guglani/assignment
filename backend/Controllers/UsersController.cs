@@ -30,7 +30,7 @@ namespace EventApp.Controllers
             return Ok(userProfile);
         }
 
-        [HttpPost("{username}")]
+        [HttpPost("/login-or-signup/{username}")]
         public async Task<ActionResult<User>> LoginOrSignUp(string username)
         {
             var user = await _userService.LoginOrSignUp(username);
