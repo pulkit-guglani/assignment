@@ -8,14 +8,11 @@ namespace EventApp.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UsersController : ControllerBase
+    public class UsersController(IEventService eventService, IUserService userService)
+        : ControllerBase
     {
-        private readonly IEventService _eventService;
-
-        public UsersController(IEventService eventService)
-        {
-            _eventService = eventService;
-        }
+        private readonly IEventService _eventService = eventService;
+        private readonly IUserService _userService = userService;
 
         [HttpGet("{username}")]
         public async Task<ActionResult<User>> GetUser(string username)
@@ -31,6 +28,13 @@ namespace EventApp.Controllers
             };
 
             return Ok(userProfile);
+        }
+
+        [HttpPost("{username}")]
+        public async Task<ActionResult<User>> LoginOrSignUp(string username)
+        {
+            var user = await _userService.LoginOrSignUp(username);
+            return Ok(user);
         }
     }
 }
