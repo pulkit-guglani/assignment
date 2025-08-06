@@ -1,9 +1,9 @@
-using EventApp.Data;
-using EventApp.Models;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EventApp.Data;
+using EventApp.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EventApp.Services
 {
@@ -18,9 +18,7 @@ namespace EventApp.Services
 
         public async Task<IEnumerable<Event>> GetEventsByUserAsync(string username)
         {
-            return await _context.Events
-                                  .Where(e => e.Username == username)
-                                  .ToListAsync();
+            return await _context.Events.Where(e => e.Username == username).ToListAsync();
         }
 
         public async Task<Event> CreateEventAsync(Event newEvent)

@@ -1,6 +1,6 @@
-using EventApp.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using EventApp.Models;
 
 namespace EventApp.Services
 {
