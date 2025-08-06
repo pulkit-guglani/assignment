@@ -1,4 +1,4 @@
-import { createEvent, editEvent } from "@/api/event";
+import { createEvent, deleteEvent, editEvent } from "@/api/event";
 import { useMutation } from "@tanstack/react-query";
 import { Event } from "@/types/event";
 
@@ -14,5 +14,16 @@ export const useEditEventMutation = () =>
     mutationKey: ["edit-event"],
     mutationFn: (event: Event) => {
       return editEvent(event, event.id);
+    },
+  });
+
+export const useDeleteEventMutation = () =>
+  useMutation({
+    mutationKey: ["delete-event"],
+    mutationFn: (eventId: number | undefined) => {
+      if (!eventId) {
+        throw new Error("Event ID is required");
+      }
+      return deleteEvent(eventId);
     },
   });

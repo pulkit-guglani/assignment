@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Event } from "../types/event";
 import Image from "next/image";
 
@@ -11,16 +10,9 @@ interface EventCardProps {
 }
 
 export default function EventCard({ event, onEdit, onDelete }: EventCardProps) {
-  const [isDeleting, setIsDeleting] = useState(false);
-
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this event?")) {
-      setIsDeleting(true);
-      try {
-        if (event?.id) await onDelete(event.id);
-      } finally {
-        setIsDeleting(false);
-      }
+      if (event?.id) onDelete(event.id);
     }
   };
 
@@ -68,10 +60,9 @@ export default function EventCard({ event, onEdit, onDelete }: EventCardProps) {
 
         <button
           onClick={handleDelete}
-          disabled={isDeleting}
           className="bg-gray-800 hover:bg-gray-700 disabled:bg-gray-400 text-white px-3 py-1 rounded text-xs transition-colors"
         >
-          {isDeleting ? "Deleting..." : "Delete"}
+          Delete
         </button>
       </div>
     </div>

@@ -5,7 +5,11 @@ import EventCard from "../../../components/EventCard";
 import EditEventDialog from "../../../components/EditEventDialog";
 import { Event } from "../../../types/event";
 import { useGetUserEvents } from "../query";
-import { useCreateEventMutation, useEditEventMutation } from "../mutation";
+import {
+  useCreateEventMutation,
+  useDeleteEventMutation,
+  useEditEventMutation,
+} from "../mutation";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function MyEventsPage() {
@@ -28,7 +32,11 @@ export default function MyEventsPage() {
     isPending: isEditingEvent,
     isSuccess: isEventEdited,
   } = useEditEventMutation();
-
+  const {
+    mutate: deleteEvent,
+    isPending: isDeletingEvent,
+    isSuccess: isEventDeleted,
+  } = useDeleteEventMutation();
   useEffect(() => {
     const username = localStorage.getItem("username");
     if (username) {
@@ -54,6 +62,12 @@ export default function MyEventsPage() {
     }
   }, [isEventEdited]);
 
+  useEffect(() => {
+    if (isEventDeleted) {
+      resetEventForm();
+    }
+  }, [isEventDeleted]);
+
   const handleCreateNewEvent = () => {
     setEventEditMode("create");
     setEditingEvent(null);
@@ -67,7 +81,7 @@ export default function MyEventsPage() {
   };
 
   const handleDeleteEvent = async (eventId: number) => {
-    console.log("Delete event:", eventId);
+    deleteEvent(eventId);
   };
 
   const handleLinkToPublicEvents = () => {
