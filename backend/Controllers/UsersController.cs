@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace EventApp.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("/users")]
     public class UsersController(IEventService eventService, IUserService userService)
         : ControllerBase
     {
