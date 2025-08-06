@@ -1,8 +1,8 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using EventApp.Models;
 using EventApp.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace EventApp.Controllers
 {
@@ -31,9 +31,11 @@ namespace EventApp.Controllers
         {
             var createdEvent = await _eventService.CreateEventAsync(eventRequest);
 
-            return CreatedAtAction(nameof(GetEventsByUser),
-                                   new { username = createdEvent.Username },
-                                   createdEvent);
+            return CreatedAtAction(
+                nameof(GetEventsByUser),
+                new { username = createdEvent.Username },
+                createdEvent
+            );
         }
     }
 }

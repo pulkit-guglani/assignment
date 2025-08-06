@@ -7,6 +7,7 @@ namespace EventApp.Services
     public interface IEventService
     {
         Task<IEnumerable<Event>> GetEventsByUserAsync(string username);
+        Task<IEnumerable<Event>> GetRsvpedEventsByUserAsync(string username);
         Task<Event> CreateEventAsync(Event newEvent);
     }
 }
