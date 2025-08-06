@@ -64,6 +64,12 @@ export default function PublicEventsPage() {
     localStorage.removeItem("username");
     setCurrentUser(null);
     setIsLoggedIn(false);
+    queryClient.invalidateQueries({ queryKey: ["userData"] });
+    queryClient.setQueryData(["userData"], {
+      username: "",
+      createdEvents: [],
+      rsvpedEvents: [],
+    });
   };
 
   if (isLoadingPublicEvents) {

@@ -109,8 +109,9 @@ namespace EventApp.Services
                 return false;
             }
 
-            existingEvent.RsvpedUsers.Add(username);
+            existingEvent.RsvpedUsers = [.. existingEvent.RsvpedUsers, username];
             existingEvent.RsvpCount++;
+
             await _context.SaveChangesAsync();
             return true;
         }

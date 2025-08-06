@@ -16,6 +16,8 @@ export default function PublicEventCard({
   isRSVPLoading,
   userData,
 }: PublicEventCardProps) {
+  const alreadyRSVPed = userData?.rsvpedEvents.some((e) => e.id === event.id);
+
   const handleRSVP = () => {
     if (event?.id) {
       onRSVP(event.id);
@@ -61,10 +63,10 @@ export default function PublicEventCard({
       <div className="flex justify-end items-center mt-3">
         <button
           onClick={handleRSVP}
-          disabled={isEventFull || isRSVPLoading}
+          disabled={isEventFull || isRSVPLoading || alreadyRSVPed}
           className={`px-3 py-1 rounded text-xs transition-colors ${
-            isEventFull
-              ? "bg-gray-400 text-white cursor-not-allowed"
+            isEventFull || alreadyRSVPed
+              ? "bg-gray-400 text-white !cursor-not-allowed"
               : "bg-gray-800 hover:bg-gray-700 disabled:bg-gray-400 text-white"
           }`}
         >
@@ -72,7 +74,7 @@ export default function PublicEventCard({
             ? "RSVPing..."
             : isEventFull
             ? "Full"
-            : userData?.rsvpedEvents.some((e) => e.id === event.id)
+            : alreadyRSVPed
             ? "RSVPed"
             : "RSVP"}
         </button>
