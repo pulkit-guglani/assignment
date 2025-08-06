@@ -5,6 +5,10 @@ export async function getUserEvents(username: string) {
   const response = await api.get(`/events/${username}`);
   return response.data;
 }
+export async function getPublicEvents() {
+  const response = await api.get(`/events/all`);
+  return response.data;
+}
 
 export async function createEvent(event: Event) {
   const response = await api.post("/events", event);
@@ -24,5 +28,10 @@ export async function deleteEvent(eventId: number | undefined) {
     throw new Error("Event ID is required");
   }
   const response = await api.delete(`/events/${eventId}`);
+  return response.data;
+}
+
+export async function rsvpToEvent(eventId: number, username: string) {
+  const response = await api.post(`/events/${eventId}/rsvp?username=${username}`);
   return response.data;
 }

@@ -1,18 +1,24 @@
 "use client";
 
+import { User } from "@/types/user";
 import { Event } from "../types/event";
-import Image from "next/image";
 
-interface EventCardProps {
+interface PublicEventCardProps {
   event: Event;
-  onEdit: (event: Event) => void;
-  onDelete: (eventId: number) => void;
+  onRSVP: (eventId: number) => void;
+  isRSVPLoading?: boolean;
+  userData: User | null;
 }
 
-export default function EventCard({ event, onEdit, onDelete }: EventCardProps) {
-  const handleDelete = async () => {
-    if (window.confirm("Are you sure you want to delete this event?")) {
-      if (event?.id) onDelete(event.id);
+export default function PublicEventCard({
+  event,
+  onRSVP,
+  isRSVPLoading,
+  userData,
+}: PublicEventCardProps) {
+  const handleRSVP = () => {
+    if (event?.id) {
+      onRSVP(event.id);
     }
   };
 
@@ -32,6 +38,11 @@ export default function EventCard({ event, onEdit, onDelete }: EventCardProps) {
     return `${hour12}:${minutes} ${ampm}`;
   };
 
+  const isEventFull =
+    event?.rsvpCount && event?.maxRsvpCount
+      ? event.rsvpCount >= event.maxRsvpCount
+      : false;
+
   return (
     <div className="bg-gray-100 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
       <div className="space-y-1">
@@ -40,28 +51,30 @@ export default function EventCard({ event, onEdit, onDelete }: EventCardProps) {
           <div>Date: {formatDate(event.date)}</div>
           <div>Time: {formatTime(event.time)}</div>
           <div>Location: {event.location}</div>
+          <div>Description: {event.description}</div>
           <div>
             RSVPs: {event.rsvpCount} / {event.maxRsvpCount}
           </div>
         </div>
       </div>
 
-      <div className="flex justify-between items-center mt-3">
-        <div className="flex items-center space-x-1">
-          <button
-            onClick={() => onEdit(event)}
-            className="text-xs flex items-center gap-1 text-gray-600"
-          >
-            <Image src="/pencil.svg" alt="Edit" width={16} height={16} />
-            Edit
-          </button>
-        </div>
-
+      <div className="flex justify-end items-center mt-3">
         <button
-          onClick={handleDelete}
-          className="bg-gray-800 hover:bg-gray-700 disabled:bg-gray-400 text-white px-3 py-1 rounded text-xs transition-colors"
+          onClick={handleRSVP}
+          disabled={isEventFull || isRSVPLoading}
+          className={`px-3 py-1 rounded text-xs transition-colors ${
+            isEventFull
+              ? "bg-gray-400 text-white cursor-not-allowed"
+              : "bg-gray-800 hover:bg-gray-700 disabled:bg-gray-400 text-white"
+          }`}
         >
-          Delete
+          {isRSVPLoading
+            ? "RSVPing..."
+            : isEventFull
+            ? "Full"
+            : userData?.rsvpedEvents.some((e) => e.id === event.id)
+            ? "RSVPed"
+            : "RSVP"}
         </button>
       </div>
     </div>

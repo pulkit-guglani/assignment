@@ -1,5 +1,5 @@
-import { createEvent, deleteEvent, editEvent } from "@/api/event";
-import { useMutation } from "@tanstack/react-query";
+import { createEvent, deleteEvent, editEvent, rsvpToEvent } from "@/api/event";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Event } from "@/types/event";
 
 export const useCreateEventMutation = () =>
@@ -27,3 +27,23 @@ export const useDeleteEventMutation = () =>
       return deleteEvent(eventId);
     },
   });
+
+export const useRsvpToEventMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ["rsvp-event"],
+    mutationFn: ({
+      eventId,
+      username,
+    }: {
+      eventId: number;
+      username: string;
+    }) => {
+      return rsvpToEvent(eventId, username);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userData"] });
+    },
+  });
+};

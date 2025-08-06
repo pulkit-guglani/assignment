@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import EventCard from "../../../components/EventCard";
 import EditEventDialog from "../../../components/EditEventDialog";
 import { Event } from "../../../types/event";
@@ -19,6 +20,7 @@ export default function MyEventsPage() {
   const [eventEditMode, setEventEditMode] = useState<"create" | "edit">(
     "create"
   );
+  const router = useRouter();
   const queryClient = useQueryClient();
   const { data: userEvents, isLoading: isLoadingUserEvents } =
     useGetUserEvents(currentUser);
@@ -85,7 +87,7 @@ export default function MyEventsPage() {
   };
 
   const handleLinkToPublicEvents = () => {
-    console.log("Link to public events clicked");
+    router.push("/events/public");
   };
 
   const handleSaveEvent = (eventData: Event) => {
@@ -159,9 +161,9 @@ export default function MyEventsPage() {
         <div className="text-center mt-8">
           <button
             onClick={handleLinkToPublicEvents}
-            className=" hover:text-blue-800 underline cursor-pointer"
+            className="text-blue-600 hover:text-blue-800 underline cursor-pointer"
           >
-            Link to Public Events Page
+            View Public Events
           </button>
         </div>
       </main>
