@@ -21,7 +21,6 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddScoped<IEventService, EventService>();
-
 builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -44,5 +43,14 @@ app.UseSwaggerUI();
 app.UseCors("AllowLocalhost3000");
 
 app.MapControllers();
+
+app.MapGet(
+    "/",
+    context =>
+    {
+        context.Response.Redirect("/swagger");
+        return Task.CompletedTask;
+    }
+);
 
 app.Run();
