@@ -4,13 +4,22 @@ import { useState, useEffect } from "react";
 import EventCard from "../../../components/EventCard";
 import EditEventDialog from "../../../components/EditEventDialog";
 import { Event } from "../../../types/event";
+import { useGetUserEvents } from "../query";
+import { useCreateEventMutation } from "../mutation";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function MyEventsPage() {
-  const [events, setEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<string>("Username");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  const queryClient = useQueryClient();
+  const { data: userEvents, isLoading: isLoadingUserEvents } =
+    useGetUserEvents(currentUser);
+  const {
+    mutate: createEvent,
+    isPending: isCreatingEvent,
+    isSuccess: isEventCreated,
+  } = useCreateEventMutation();
 
   useEffect(() => {
     const username = localStorage.getItem("username");
@@ -19,100 +28,16 @@ export default function MyEventsPage() {
     }
   }, []);
 
-  // Mock data for demonstration - replace with actual API call
   useEffect(() => {
-    const mockEvents: Event[] = [
-      {
-        id: 1,
-        eventName: "Event Name",
-        date: "2024-01-15",
-        time: "10:00 AM",
-        location: "Location",
-        maxRsvpCount: 200,
-        rsvpCount: 2,
-        username: "Username",
-      },
-      {
-        id: 2,
-        eventName: "Event Name",
-        date: "2024-01-16",
-        time: "2:00 PM",
-        location: "Location",
-        maxRsvpCount: 100,
-        rsvpCount: 1,
-        username: "Username",
-      },
-      {
-        id: 3,
-        eventName: "Event Name",
-        date: "2024-01-17",
-        time: "6:00 PM",
-        location: "Location",
-        maxRsvpCount: 200,
-        rsvpCount: 2,
-        username: "Username",
-      },
-      {
-        id: 4,
-        eventName: "Event Name",
-        date: "2024-01-18",
-        time: "9:00 AM",
-        location: "Location",
-        maxRsvpCount: 200,
-        rsvpCount: 2,
-        username: "Username",
-      },
-      {
-        id: 5,
-        eventName: "Event Name",
-        date: "2024-01-19",
-        time: "3:00 PM",
-        location: "Location",
-        maxRsvpCount: 200,
-        rsvpCount: 2,
-        username: "Username",
-      },
-      {
-        id: 6,
-        eventName: "Event Name",
-        date: "2024-01-20",
-        time: "7:00 PM",
-        location: "Location",
-        maxRsvpCount: 200,
-        rsvpCount: 2,
-        username: "Username",
-      },
-      {
-        id: 7,
-        eventName: "Event Name",
-        date: "2024-01-21",
-        time: "11:00 AM",
-        location: "Location",
-        maxRsvpCount: 200,
-        rsvpCount: 2,
-        username: "Username",
-      },
-      {
-        id: 8,
-        eventName: "Event Name",
-        date: "2024-01-22",
-        time: "4:00 PM",
-        location: "Location",
-        maxRsvpCount: 200,
-        rsvpCount: 2,
-        username: "Username",
-      },
-    ];
-
-    // Simulate API loading
-    setTimeout(() => {
-      setEvents(mockEvents);
-      setLoading(false);
-    }, 500);
-  }, []);
+    if (isEventCreated) {
+      setIsDialogOpen(false);
+      setEditingEvent(null);
+      queryClient.invalidateQueries({ queryKey: ["userEvents"] });
+    }
+  }, [isEventCreated]);
 
   const handleCreateNewEvent = () => {
-    setEditingEvent(null); // Ensure we're creating a new event
+    setEditingEvent(null);
     setIsDialogOpen(true);
   };
 
@@ -122,9 +47,6 @@ export default function MyEventsPage() {
   };
 
   const handleDeleteEvent = async (eventId: number) => {
-    setEvents((prevEvents) =>
-      prevEvents.filter((event) => event.id !== eventId)
-    );
     console.log("Delete event:", eventId);
   };
 
@@ -132,26 +54,8 @@ export default function MyEventsPage() {
     console.log("Link to public events clicked");
   };
 
-  const handleSaveEvent = (eventData: Partial<Event>) => {
-    if (editingEvent) {
-      const updatedEvent = { ...editingEvent, ...eventData };
-      setEvents((prevEvents) =>
-        prevEvents.map((event) =>
-          event.id === editingEvent.id ? updatedEvent : event
-        )
-      );
-      console.log("Event updated:", updatedEvent);
-    } else {
-      const newEvent: Event = {
-        id: Date.now(),
-        rsvpCount: 0,
-        ...eventData,
-      } as Event;
-      setEvents((prevEvents) => [newEvent, ...prevEvents]);
-      console.log("New event created:", newEvent);
-    }
-    setIsDialogOpen(false);
-    setEditingEvent(null);
+  const handleSaveEvent = (eventData: Event) => {
+    createEvent(eventData);
   };
 
   const handleCloseDialog = () => {
@@ -159,10 +63,10 @@ export default function MyEventsPage() {
     setEditingEvent(null);
   };
 
-  if (loading) {
+  if (isLoadingUserEvents) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-lg">Loading...</div>
+        <div className="text-lg text-gray-800">Loading...</div>
       </div>
     );
   }
@@ -196,13 +100,13 @@ export default function MyEventsPage() {
             My Events
           </h2>
 
-          {events.length === 0 ? (
+          {userEvents?.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               No events found. Create your first event!
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {events.map((event) => (
+              {userEvents?.map((event) => (
                 <EventCard
                   key={event.id}
                   event={event}
@@ -224,12 +128,12 @@ export default function MyEventsPage() {
         </div>
       </main>
 
-      {/* Edit Event Dialog */}
       <EditEventDialog
         isOpen={isDialogOpen}
         onClose={handleCloseDialog}
         onSave={handleSaveEvent}
         event={editingEvent}
+        isLoading={isCreatingEvent}
       />
     </div>
   );

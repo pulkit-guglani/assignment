@@ -17,7 +17,7 @@ export default function EventCard({ event, onEdit, onDelete }: EventCardProps) {
     if (window.confirm("Are you sure you want to delete this event?")) {
       setIsDeleting(true);
       try {
-        await onDelete(event.id);
+        if (event?.id) await onDelete(event.id);
       } finally {
         setIsDeleting(false);
       }
@@ -25,11 +25,20 @@ export default function EventCard({ event, onEdit, onDelete }: EventCardProps) {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString();
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
   };
 
   const formatTime = (timeString: string) => {
-    return timeString;
+    // timeString is in format "HH:mm:ss", convert to "HH:mm AM/PM"
+    const [hours, minutes] = timeString.split(":");
+    const hour24 = parseInt(hours);
+    const hour12 = hour24 === 0 ? 12 : hour24 > 12 ? hour24 - 12 : hour24;
+    const ampm = hour24 >= 12 ? "PM" : "AM";
+    return `${hour12}:${minutes} ${ampm}`;
   };
 
   return (
@@ -37,10 +46,12 @@ export default function EventCard({ event, onEdit, onDelete }: EventCardProps) {
       <div className="space-y-1">
         <h3 className="font-medium text-gray-900 text-sm">{event.eventName}</h3>
         <div className="text-xs text-gray-600 space-y-0.5">
-          <div>Date</div>
-          <div>Time</div>
-          <div>Location</div>
-          <div>RSVPs: {event.rsvpCount} / T Y Max</div>
+          <div>Date: {formatDate(event.date)}</div>
+          <div>Time: {formatTime(event.time)}</div>
+          <div>Location: {event.location}</div>
+          <div>
+            RSVPs: {event.rsvpCount} / {event.maxRsvpCount}
+          </div>
         </div>
       </div>
 

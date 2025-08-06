@@ -6,8 +6,9 @@ import { Event } from "../types/event";
 interface EditEventDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (event: Partial<Event>) => void;
+  onSave: (event: Event) => void;
   event?: Event | null; // null or undefined for creating new event
+  isLoading: boolean;
 }
 
 export default function EditEventDialog({
@@ -15,6 +16,7 @@ export default function EditEventDialog({
   onClose,
   onSave,
   event,
+  isLoading,
 }: EditEventDialogProps) {
   const [formData, setFormData] = useState({
     eventName: "",
@@ -37,10 +39,23 @@ export default function EditEventDialog({
   // Populate form when editing existing event
   useEffect(() => {
     if (event) {
+      // Convert ISO date format to YYYY-MM-DD for HTML date input
+      const formatDateForInput = (dateString: string) => {
+        if (!dateString) return "";
+        const date = new Date(dateString);
+        return date.toISOString().split("T")[0];
+      };
+
+      // Convert HH:mm:ss to HH:mm for HTML time input
+      const formatTimeForInput = (timeString: string) => {
+        if (!timeString) return "";
+        return timeString.substring(0, 5); // Take only HH:mm part
+      };
+
       setFormData({
         eventName: event.eventName || "",
-        date: event.date || "",
-        time: event.time || "",
+        date: formatDateForInput(event.date),
+        time: formatTimeForInput(event.time),
         location: event.location || "",
         description: event.description || "",
         maxRsvpCount: event.maxRsvpCount?.toString() || "",
@@ -93,10 +108,21 @@ export default function EditEventDialog({
       return;
     }
 
-    const eventData: Partial<Event> = {
+    // Convert form data to API format
+    const formatDateForAPI = (dateString: string) => {
+      // Convert YYYY-MM-DD to ISO format YYYY-MM-DDTHH:mm:ss
+      return `${dateString}T00:00:00`;
+    };
+
+    const formatTimeForAPI = (timeString: string) => {
+      // Convert HH:mm to HH:mm:ss
+      return `${timeString}:00`;
+    };
+
+    const eventData: Event = {
       eventName: formData.eventName.trim(),
-      date: formData.date,
-      time: formData.time,
+      date: formatDateForAPI(formData.date),
+      time: formatTimeForAPI(formData.time),
       location: formData.location.trim(),
       description: formData.description.trim(),
       maxRsvpCount: parseInt(formData.maxRsvpCount),
@@ -267,8 +293,9 @@ export default function EditEventDialog({
             <button
               type="submit"
               className="flex-1 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors font-medium"
+              disabled={isLoading}
             >
-              Save Event
+              {isLoading ? "Saving..." : "Save Event"}
             </button>
             <button
               type="button"
