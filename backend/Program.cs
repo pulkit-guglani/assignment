@@ -9,6 +9,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        "AllowLocalhost3000",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
+        }
+    );
+});
+
 builder.Services.AddScoped<IEventService, EventService>();
 
 builder.Services.AddScoped<IUserService, UserService>();
@@ -29,6 +40,8 @@ using (var scope = app.Services.CreateScope())
 
 app.UseSwagger();
 app.UseSwaggerUI();
+
+app.UseCors("AllowLocalhost3000");
 
 app.MapControllers();
 
