@@ -25,6 +25,13 @@ namespace EventApp.Controllers
             return Ok(events);
         }
 
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<Event>>> GetAllEvents()
+        {
+            var events = await _eventService.GetAllEventsAsync();
+            return Ok(events);
+        }
+
         // POST: api/events
         [HttpPost]
         public async Task<ActionResult<Event>> CreateEvent(Event eventRequest)

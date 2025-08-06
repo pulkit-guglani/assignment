@@ -22,6 +22,11 @@ namespace EventApp.Services
             return await _context.Events.Where(e => e.Username == username).ToListAsync();
         }
 
+        public async Task<IEnumerable<Event>> GetAllEventsAsync()
+        {
+            return await _context.Events.ToListAsync();
+        }
+
         public async Task<IEnumerable<Event>> GetRsvpedEventsByUserAsync(string username)
         {
             // Retrieve all events and filter in-memory for RSVPs containing the specified username
