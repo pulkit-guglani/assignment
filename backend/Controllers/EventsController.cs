@@ -54,5 +54,12 @@ namespace EventApp.Controllers
                 updatedEvent
             );
         }
+
+        [HttpDelete("{eventId}")]
+        public async Task<ActionResult<bool>> DeleteEvent(int eventId)
+        {
+            var result = await _eventService.DeleteEventAsync(eventId);
+            return result ? Ok() : NotFound();
+        }
     }
 }

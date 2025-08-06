@@ -72,5 +72,18 @@ namespace EventApp.Services
             await _context.SaveChangesAsync();
             return existingEvent;
         }
+
+        public async Task<bool> DeleteEventAsync(int eventId)
+        {
+            var existingEvent = await _context.Events.FirstOrDefaultAsync(e => e.Id == eventId);
+            if (existingEvent == null)
+            {
+                return false;
+            }
+
+            _context.Events.Remove(existingEvent);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

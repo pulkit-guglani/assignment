@@ -10,5 +10,6 @@ namespace EventApp.Services
         Task<IEnumerable<Event>> GetRsvpedEventsByUserAsync(string username);
         Task<Event> CreateEventAsync(Event newEvent);
         Task<Event> UpdateEventAsync(Event updatedEvent, int eventId);
+        Task<bool> DeleteEventAsync(int eventId);
     }
 }
