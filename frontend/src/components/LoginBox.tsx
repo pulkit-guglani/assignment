@@ -1,21 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLoginSignupMutation } from "../app/login/mutation";
+import { useRouter } from "next/navigation";
 
 // Basic login component with minimal styling
 // Calls POST /login with a JSON body: { username }
 export default function LoginBox() {
   const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
-
-  const loginMutation = useLoginSignupMutation();
+  const router = useRouter();
+  const {
+    mutate: loginMutation,
+    isPending,
+    isSuccess,
+  } = useLoginSignupMutation();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!username) return;
-    loginMutation.mutate(username);
+    loginMutation(username);
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      localStorage.setItem("username", username);
+      router.push("/events/my");
+    }
+  }, [isSuccess]);
 
   return (
     <div className="w-full max-w-sm flex flex-col items-center space-y-6">
@@ -35,14 +47,14 @@ export default function LoginBox() {
 
         <button
           type="submit"
-          disabled={loginMutation.isPending}
+          disabled={isPending}
           className="px-8 py-2 border border-gray-700 rounded-sm hover:bg-gray-100 disabled:opacity-60"
         >
-          {loginMutation.isPending ? "Logging in..." : "Login"}
+          {isPending ? "Logging in..." : "Login"}
         </button>
 
         {error && <p className="text-red-600 text-sm">{error}</p>}
-        {loginMutation.isSuccess && (
+        {isSuccess && (
           <p className="text-green-600 text-sm">Logged in successfully!</p>
         )}
       </form>
