@@ -53,5 +53,24 @@ namespace EventApp.Services
 
             return newEvent;
         }
+
+        public async Task<Event> UpdateEventAsync(Event updatedEvent, int eventId)
+        {
+            if (updatedEvent == null)
+                throw new ArgumentNullException(nameof(updatedEvent));
+
+            var existingEvent = await _context.Events.FirstOrDefaultAsync(e => e.Id == eventId);
+            if (existingEvent == null)
+            {
+                return null;
+            }
+
+            var originalUsername = existingEvent.Username;
+            existingEvent = updatedEvent;
+            existingEvent.Username = originalUsername;
+
+            await _context.SaveChangesAsync();
+            return existingEvent;
+        }
     }
 }

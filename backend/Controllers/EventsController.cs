@@ -37,5 +37,22 @@ namespace EventApp.Controllers
                 createdEvent
             );
         }
+
+        [HttpPatch("{eventId}")]
+        public async Task<ActionResult<Event>> UpdateEvent(int eventId, Event eventRequest)
+        {
+            var updatedEvent = await _eventService.UpdateEventAsync(eventRequest, eventId);
+
+            if (updatedEvent == null)
+            {
+                return NotFound();
+            }
+
+            return CreatedAtAction(
+                nameof(GetEventsByUser),
+                new { username = updatedEvent.Username },
+                updatedEvent
+            );
+        }
     }
 }
